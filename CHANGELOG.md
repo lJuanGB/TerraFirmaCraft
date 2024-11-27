@@ -1,6 +1,9 @@
-Another small crash fix of the "this worked in dev" variety. Unfortunately, this arose because our compiler decided to do something different from what it has been doing for a ~year, forcing us to rename a method. This release may break addons as a result, although it should be a fairly straightforward update.
+Brought to you from Arkansas,
 
-### Changes
+### Fixes
 
-- Fix crash due to `IFluidLoggable.m_5888_` (#2812)
-- Fix baby horses only inheriting speed from one parent (#2813)
+- Fix crucibles overwriting the temperature of their output to the temperature of the crucible, not the temperature of the input when melting (#2819)
+- Fix anvil plans getting reset when working on client-side, along with other client-side issues related to capability sync (#2822)
+- Fix some vanilla bamboo items being craftable when they were not intending to be (#2833)
+- Fix raw eggs not being able to be cooked (#2834)
+- Fix flickering nutrition / health bars when hunger decays on client (#2835)
