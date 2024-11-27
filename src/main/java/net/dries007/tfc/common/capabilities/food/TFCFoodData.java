@@ -188,6 +188,11 @@ public class TFCFoodData extends net.minecraft.world.food.FoodData
         // Next, tick the original food stats
         delegate.tick(player);
 
+        // Update the nutrition view of hunger, as it is calculated for this tick now
+        // We can't track this on change effectively, because the above tick() method, any potentially other modifications through `delegate`,
+        // will modify the field directly, not going through the accessor we can override
+        nutritionData.setHunger(getFoodLevel());
+
         // Apply custom TFC regeneration
         if (player.tickCount % 10 == 0)
         {
@@ -270,7 +275,6 @@ public class TFCFoodData extends net.minecraft.world.food.FoodData
     public void setFoodLevel(int food)
     {
         delegate.setFoodLevel(food);
-        nutritionData.setHunger(food);
     }
 
     @Override
