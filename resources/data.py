@@ -98,7 +98,7 @@ def generate(rm: ResourceManager):
     item_heat(rm, 'potato', 'tfc:food/potato', 1.0)
     item_heat(rm, 'giant_kelp_flower', 'tfc:plant/giant_kelp_flower', 1.0)
     item_heat(rm, 'dried_kelp', 'tfc:food/dried_kelp', 1.0)
-    item_heat(rm, 'egg', 'minecraft:egg', 1.0, destroy_at=1050)
+    item_heat(rm, 'egg', 'minecraft:egg', 1.0)
     item_heat(rm, 'blooms', '#tfc:blooms', wrought_iron.ingot_heat_capacity(), wrought_iron.melt_temperature, mb=100)
     item_heat(rm, 'flux', 'tfc:powder/flux', 0.7)
 
