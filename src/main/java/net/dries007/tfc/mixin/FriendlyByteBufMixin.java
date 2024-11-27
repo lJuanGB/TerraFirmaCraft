@@ -38,6 +38,6 @@ public abstract class FriendlyByteBufMixin
     )
     private void readSyncableCapabilityData(ItemStack stack, CompoundTag tag)
     {
-        stack.readShareTag(ItemStackCapabilitySync.readFromNetwork(stack, tag));
+        ItemStackCapabilitySync.readFromNetwork(stack, tag);
     }
 }

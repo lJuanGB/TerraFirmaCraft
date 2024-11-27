@@ -84,25 +84,38 @@ public final class ItemStackCapabilitySync
         return originalTag;
     }
 
-    @Nullable
-    public static CompoundTag readFromNetwork(ItemStack stack, @Nullable CompoundTag tag)
+    public static void readFromNetwork(ItemStack stack, @Nullable CompoundTag tag)
     {
         if (tag != null)
         {
-            // Always read, if we can. This removes the NBT from the network if we added it
-            boolean modified = false;
-            modified |= readFromNetwork(FOOD_ID, FoodCapability.NETWORK_CAPABILITY, stack, tag);
-            modified |= readFromNetwork(HEAT_ID, HeatCapability.NETWORK_CAPABILITY, stack, tag);
-            if (tag.isEmpty() && modified)
+            // If a stack tag is present, try and read our custom NBT if we added it. We prepare the stack tag *first*, because
+            // we don't want to trigger capability loading until `readShareTag()` has been set. This sets the stack tag, and several
+            // of our capabilities read state information from said tag when initialized.
+            final @Nullable CompoundTag foodTag = readTagFromNetwork(FOOD_ID, tag);
+            final @Nullable CompoundTag heatTag = readTagFromNetwork(HEAT_ID, tag);
+
+            if (foodTag != null || heatTag != null)
             {
-                // In this instance, the tag was modified by us, and we removed all the content that is contained.
-                // Check for the presence of an empty flag, which would indicate that the original tag was still present (but empty)
+                // We have modified the original tag, so we need to check for the present-but-empty case
+                // If we find an 'empty' flag, the original tag was present but empty. No flag = the original tag was `null`
                 final boolean wasEmptyButPresent = tag.getBoolean(EMPTY_ID);
+
                 tag.remove(EMPTY_ID);
-                if (!wasEmptyButPresent) return null;
+                if (!wasEmptyButPresent && tag.isEmpty())
+                {
+                    tag = null;
+                }
             }
+
+            // At this point in normal loading, we read the share tag, setting the stack NBT
+            // This must be done *before* we read capabilities, as we want it to be present during cap initialization, which is not lazy (as our
+            // immediate query will initialize them).
+            stack.readShareTag(tag);
+
+            // Then read capabilities
+            readCapabilityFromTag(foodTag, FoodCapability.NETWORK_CAPABILITY, stack);
+            readCapabilityFromTag(heatTag, HeatCapability.NETWORK_CAPABILITY, stack);
         }
-        return tag;
     }
 
     private static void writeToNetwork(String networkId, Capability<? extends INBTSerializable<CompoundTag>> capability, ItemStack stack, CompoundTag rootTag)
@@ -112,14 +125,23 @@ public final class ItemStackCapabilitySync
             .ifPresent(tag -> rootTag.put(networkId, tag));
     }
 
-    private static boolean readFromNetwork(String networkId, Capability<? extends INBTSerializable<CompoundTag>> capability, ItemStack stack, CompoundTag tag)
+    @Nullable
+    private static CompoundTag readTagFromNetwork(String networkId, CompoundTag tag)
     {
         if (tag.contains(networkId, Tag.TAG_COMPOUND))
         {
-            stack.getCapability(capability).ifPresent(cap -> cap.deserializeNBT(tag.getCompound(networkId)));
+            final CompoundTag subTag = tag.getCompound(networkId);
             tag.remove(networkId);
-            return true;
+            return subTag;
         }
-        return false;
+        return null;
+    }
+
+    private static void readCapabilityFromTag(@Nullable CompoundTag tag, Capability<? extends INBTSerializable<CompoundTag>> capability, ItemStack stack)
+    {
+        if (tag != null)
+        {
+            stack.getCapability(capability).ifPresent(cap -> cap.deserializeNBT(tag));
+        }
     }
 }
