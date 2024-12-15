@@ -112,7 +112,7 @@ dependencies {
     //runtimeOnly(fg.deobf("curse.maven:panoramica-426082:4019292"))
     //runtimeOnly(fg.deobf("curse.maven:embeddium-908741:4819807"))
     //runtimeOnly(fg.deobf("curse.maven:rubidium-574856:4767529"))
-    //runtimeOnly(fg.deobf("curse.maven:create-328085:4835191"))
+    // runtimeOnly(fg.deobf("curse.maven:create-328085:5838779"))
     //runtimeOnly(fg.deobf("curse.maven:corpse-316582:5157034"))
     //runtimeOnly(fg.deobf("curse.maven:distant-horizons-508933:5390046"))
     //runtimeOnly(fg.deobf("curse.maven:firmalife-453394:5456804"))

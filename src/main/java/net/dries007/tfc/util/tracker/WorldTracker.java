@@ -51,16 +51,16 @@ import org.jetbrains.annotations.Nullable;
 public class WorldTracker implements ICapabilitySerializable<CompoundTag>
 {
     /**
-     * Returns the world tracker for a given world. Note that we always expect <strong>every world</strong> to have a tracker attached, and thus this will throw
-     * if the tracker does not exist. The world tracker exists on both client and server worlds, although it may be in various states of valid in client worlds.
-     *
-     * @param level The world to query.
-     * @return The world tracker for this world.
+     * Returns the world tracker for a given world. Every <strong>real</strong> world must have a world tracker attached, i.e.
+     * worlds created by vanilla. Mods may do weird things (see <a href="https://github.com/TerraFirmaCraft/TerraFirmaCraft/issues/2842">
+     * TerraFirmaCraft#2842</a>) that create worlds without trackers, so in those cases we return an empty no-op'd instance.
+     * <p>
+     * Note that while a tracker exists for both server and client, certain data may only be valid on server.
      */
     @SuppressWarnings("deprecation")
     public static WorldTracker get(Level level)
     {
-        return level.getCapability(WorldTrackerCapability.CAPABILITY).orElseThrow(() -> new IllegalStateException("Missing " + WorldTracker.class.getSimpleName()));
+        return level.getCapability(WorldTrackerCapability.CAPABILITY).orElse(NoopInstance.INSTANCE);
     }
 
     private final Level level;
@@ -334,5 +334,27 @@ public class WorldTracker implements ICapabilitySerializable<CompoundTag>
             }
         }
         return true;
+    }
+
+    static final class NoopInstance extends WorldTracker
+    {
+        public static final NoopInstance INSTANCE = new NoopInstance();
+
+        @SuppressWarnings("DataFlowIssue")
+        public NoopInstance()
+        {
+            super(null);
+        }
+
+        @Override public void addLandslidePos(BlockPos pos) {}
+        @Override public void addIsolatedPos(BlockPos pos) {}
+        @Override public void addCollapseData(Collapse collapse) {}
+        @Override public void setClimateModel(ClimateModel climateModel) {}
+        @Override public void addCollapsePositions(BlockPos centerPos, Collection<BlockPos> positions) {}
+        @Override public void setWeatherData(long rainDuration, float rainIntensity) {}
+        @Override public void setWeatherData(long rainStartTick, long rainEndTick, float rainIntensity) {}
+
+        @Override public boolean isRaining(Level level, BlockPos pos) { return false; }
+        @Override public boolean isRaining(long tick, float rainfall) { return false; }
     }
 }
