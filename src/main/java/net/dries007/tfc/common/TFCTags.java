@@ -316,6 +316,8 @@ public class TFCTags
         public static final TagKey<Item> PRESERVES = tag("foods/preserves");
         /** Includes only sealed jars with fruit in them */
         public static final TagKey<Item> SEALED_PRESERVES = tag("foods/sealed_preserves");
+        /** Fruit extracted from an unsealed jar */
+        public static final TagKey<Item> JAM = tag("foods/jam");
         /* Includes preserves, sealed preserves, and also empty jars (with and without lid) */
         public static final TagKey<Item> JARS = tag("foods/jars");
         public static final TagKey<Item> SWEETENERS = tag("foods/sweeteners");

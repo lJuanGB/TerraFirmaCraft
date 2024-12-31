@@ -144,6 +144,8 @@ public class BuiltinItemTags extends TagsProvider<Item> implements Accessors
         tag(DAIRY).add(Food.CHEESE);
         tag(SALADS).add(TFCItems.SALADS);
         tag(SOUPS).add(TFCItems.SOUPS);
+        tag(JAM).add(TFCItems.JAM);
+        tag(FOODS).addTag(JAM).add(TFCItems.FOOD);
         tag(PRESERVES).add(TFCItems.UNSEALED_FRUIT_PRESERVES);
         tag(SEALED_PRESERVES).add(TFCItems.FRUIT_PRESERVES);
         tag(JARS)
