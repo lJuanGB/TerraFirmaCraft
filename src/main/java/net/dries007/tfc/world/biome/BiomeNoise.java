@@ -149,11 +149,7 @@ public final class BiomeNoise
         return new OpenSimplex2D(seed + 398767567L)
             .octaves(2)
             .spread(0.08f)
-            .map(
-                y -> {
-                    return y = Math.abs(y);
-                }
-            );
+            .abs();
     }
 
     /**
@@ -181,7 +177,7 @@ public final class BiomeNoise
         final double widthBot = 0.2;
 
         // Basic ridge shapes following zeroes in the noise
-        final Noise2D ridges = new OpenSimplex2D(398767567L)
+        final Noise2D ridges = new OpenSimplex2D(seed + 398767567L)
             .octaves(2)
             .spread(0.06f)
             .map(
@@ -192,7 +188,7 @@ public final class BiomeNoise
             );
 
         // Cuts continuous paths through ridges to make them more passable
-        final Noise2D cuts = new OpenSimplex2D(45764379L)
+        final Noise2D cuts = new OpenSimplex2D(seed + 45764379L)
             .octaves(2)
             .spread(0.03f)
             .map(
@@ -242,15 +238,15 @@ public final class BiomeNoise
             .spread(0.06)
             .scaled(0, 0.7);
 
-        final Noise2D towers = new OpenSimplex2D(seed)
+        final Noise2D cliffBase = new OpenSimplex2D(seed)
             .octaves(2)
             .spread(0.05)
             .map(y -> {
                 y = Math.abs(y) - 0.45;
                 y = y > 0 ? Math.sqrt(y / 0.55) : 0;
                 return y;
-            })
-            .fenglinCliffMap(cliffStartHeight, cliffScale, cliffScale.map(x -> 1 - x))
+            });
+        final Noise2D towers = fenglinCliffMap(cliffBase, cliffStartHeight, cliffScale)
             .map(y -> scale * y);
 
         return baseTerrainNoise.add(towers);
@@ -289,15 +285,15 @@ public final class BiomeNoise
             .spread(0.72 / horizScale)
             .scaled(0, 0.7);
 
-        final Noise2D cenotes = new OpenSimplex2D(seed)
+        final Noise2D cliffBase = new OpenSimplex2D(seed)
             .octaves(2)
             .spread(0.6 / horizScale)
             .map(y -> {
                 y = Math.abs(y) - 0.45;
                 y = y > 0 ? Math.sqrt(y / 0.55) : 0;
                 return y;
-            })
-            .fenglinCliffMap(cliffStartHeight, cliffScale, cliffScale.map(x -> 1 - x))
+            });
+        final Noise2D cenotes = fenglinCliffMap(cliffBase, cliffStartHeight, cliffScale)
             .map(y -> -vertScale * y);
 
         return baseTerrainNoise.add(cenotes);
@@ -312,34 +308,60 @@ public final class BiomeNoise
         final Noise2D cliffScale = new OpenSimplex2D(seed + 78535267L)
             .spread(0.04)
             .scaled(0, 0.04);
-
         final Noise2D cliffStartHeight = new OpenSimplex2D(seed + 390798L)
             .spread(0.04)
             .scaled(0, 0.7);
 
-        final Noise2D wide = new OpenSimplex2D(seed)
+        final Noise2D wideCliffBase = new OpenSimplex2D(seed)
             .octaves(2)
             .spread(0.02)
             .map(y -> {
                 y = Math.abs(y) - 0.3;
                 y = y > 0 ? Math.sqrt(y / 0.7) : 0;
                 return y;
-            })
-            .fenglinCliffMap(cliffStartHeight, cliffScale, cliffScale.map(x -> 1 - x))
-            .map(y -> -22 * y);
+            });
 
-        final Noise2D deep = new OpenSimplex2D(seed)
+        final Noise2D deepCliffBase = new OpenSimplex2D(seed)
             .octaves(2)
             .spread(0.02)
             .map(y -> {
                 y = Math.abs(y) - 0.65;
                 y = y > 0 ? Math.sqrt(y / 0.35) : 0;
                 return y;
-            })
-            .fenglinCliffMap(cliffStartHeight, cliffScale, cliffScale.map(x -> 1 - x))
-            .map(y -> -24 * y);
+            });
 
-        return baseTerrainNoise.add(wide).add(deep);
+        return (x, z) -> {
+            // Multiple copies of `fenglinCliffMap()` but avoiding repeated evaluation
+            final double compare = cliffStartHeight.noise(x, z);
+            final double addend = cliffScale.noise(x, z);
+            final double wideBase = wideCliffBase.noise(x, z);
+            final double deepBase = deepCliffBase.noise(x, z);
+
+            return baseTerrainNoise.noise(x, z)
+                + -22 * (wideBase > compare ? wideBase * (1 - addend) + addend : wideBase)
+                + -24 * (deepBase > compare ? deepBase * (1 - addend) + addend : deepBase);
+        };
+    }
+
+    /**
+     * If {@code base} is higher than {@code compare}, this will return the sum {@code base * (1 - addend) + addend}. Otherwise, this
+     * will return the value of {@code base}.
+     * @return A new noise function
+     */
+    public static Noise2D fenglinCliffMap(Noise2D baseNoise, Noise2D compareNoise, Noise2D addendNoise)
+    {
+        return (x, z) -> {
+            final double base = baseNoise.noise(x, z);
+            if (base > compareNoise.noise(x, z))
+            {
+                final double addend = addendNoise.noise(x, z);
+                return base * (1 - addend) + addend;
+            }
+            else
+            {
+                return base;
+            }
+        };
     }
 
     public static double sharpHillsMap(double in)
