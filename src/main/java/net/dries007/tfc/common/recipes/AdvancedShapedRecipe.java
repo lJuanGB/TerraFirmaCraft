@@ -85,13 +85,13 @@ public class AdvancedShapedRecipe extends ShapedRecipe
             final ItemStackProvider providerResult = ItemStackProvider.fromJson(JsonHelpers.getAsJsonObject(json, "result"));
             final int inputRow = JsonHelpers.getAsInt(json, "input_row");
             final int inputCol = JsonHelpers.getAsInt(json, "input_column");
-            if (inputRow < 0 || inputRow >= width)
+            if (inputRow < 0 || inputRow >= height)
             {
-                throw new JsonParseException("input_row must be in the range [0, width)");
+                throw new JsonParseException("input_row must be in the range [0, height)");
             }
-            if (inputCol < 0 || inputCol >= height)
+            if (inputCol < 0 || inputCol >= width)
             {
-                throw new JsonParseException("input_column must be in the range [0, height)");
+                throw new JsonParseException("input_column must be in the range [0, width)");
             }
             final int inputSlot = RecipeHelpers.dissolveRowColumn(inputRow, inputCol, width);
             return new AdvancedShapedRecipe(recipeId, group, width, height, recipeItems, providerResult, inputSlot);
