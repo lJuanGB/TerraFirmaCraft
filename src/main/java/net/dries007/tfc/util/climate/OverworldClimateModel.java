@@ -254,8 +254,9 @@ public class OverworldClimateModel implements WorldGenClimateModel
     @Override
     public void onChunkLoad(WorldGenLevel level, ChunkAccess chunk, ChunkData chunkData)
     {
-        // todo: this is BROKEN and DOESN'T WORK and is FUCKING AWFUL
-        // Somehow, it barely works during world generation
+        // This code is only actually invoked during world generation. It also doesn't actually functionally work there either.
+        // I've deleted the "melt snow/ice" part of this, as it was running into potential world gen weirdness. Nothing should be
+        // placing snow or ice piles anyway, so I don't know how that was even triggering. But in any case, this should never be used.
 
         final ChunkPos chunkPos = chunk.getPos();
         final BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
@@ -292,18 +293,6 @@ public class OverworldClimateModel implements WorldGenClimateModel
                     else if (stateAt.getBlock() instanceof KrummholzBlock)
                     {
                         KrummholzBlock.updateFreezingInColumn(level, mutablePos, true);
-                    }
-                }
-                else
-                {
-                    // No snow (try and melt existing snow if we find it, which would be one block down)
-                    if (EnvironmentHelpers.isSnow(stateAt))
-                    {
-                        SnowPileBlock.removePileOrSnow(level, mutablePos, stateAt, 0);
-                    }
-                    else if (stateAt.getBlock() instanceof KrummholzBlock)
-                    {
-                        KrummholzBlock.updateFreezingInColumn(level, mutablePos, false);
                     }
                 }
 
@@ -344,19 +333,6 @@ public class OverworldClimateModel implements WorldGenClimateModel
                         else // Fresh water
                         {
                             IcePileBlock.placeIcePileOrIce(level, mutablePos, stateAt, true);
-                        }
-                    }
-                    else
-                    {
-                        // None of the above - melt ice if possible
-                        if (Helpers.isBlock(stateAt, TFCBlocks.SEA_ICE.get()))
-                        {
-                            level.setBlock(mutablePos, TFCBlocks.SALT_WATER.get().defaultBlockState(), 2);
-                            level.scheduleTick(mutablePos, TFCFluids.SALT_WATER.getSource(), 0);
-                        }
-                        else
-                        {
-                            IcePileBlock.removeIcePileOrIce(level, mutablePos, stateAt);
                         }
                     }
                 }
