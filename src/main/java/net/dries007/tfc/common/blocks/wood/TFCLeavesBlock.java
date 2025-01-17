@@ -100,7 +100,8 @@ public class TFCLeavesBlock extends Block implements ILeavesBlock, IForgeBlockEx
     {
         super(properties.properties());
 
-        this.maxDecayDistance = Collections.max(getDistanceProperty().getPossibleValues());
+        // Need to reserve the highest value for 'decay on the next random tick' because we support that behavior via config
+        this.maxDecayDistance = Collections.max(getDistanceProperty().getPossibleValues()) - 1;
         this.properties = properties;
         this.fallenLeaves = fallenLeaves;
         this.fallenTwig = fallenTwig;
@@ -338,7 +339,7 @@ public class TFCLeavesBlock extends Block implements ILeavesBlock, IForgeBlockEx
 
     protected IntegerProperty getDistanceProperty()
     {
-        return TFCBlockStateProperties.DISTANCE_9;
+        return TFCBlockStateProperties.DISTANCE_10;
     }
 
     private int updateDistance(LevelAccessor level, BlockPos pos)
