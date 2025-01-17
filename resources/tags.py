@@ -22,6 +22,7 @@ def generate(rm: ResourceManager):
     rm.item_tag('forge:string', 'tfc:wool_yarn')
     rm.item_tag('forge:shears', '#tfc:shears')
     rm.item_tag('forge:dusts', '#tfc:powders')
+    rm.item_tag('forge:seeds', '#tfc:seeds')
 
     # Minecraft Tags
 
