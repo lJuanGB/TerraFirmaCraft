@@ -756,6 +756,7 @@ public final class ForgeEventHandler
                     final ItemStack stack = inv.getStackInSlot(0);
                     if (stack.getItem() == Items.GUNPOWDER)
                     {
+                        Helpers.removeStack(inv, 0); // Clear the inventory to prevent drops; see TerraFirmaCraft#2856
                         level.explode(null, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, stack.getCount() / 6f + 2f, Level.ExplosionInteraction.BLOCK);
                         event.setCanceled(true);
                     }
