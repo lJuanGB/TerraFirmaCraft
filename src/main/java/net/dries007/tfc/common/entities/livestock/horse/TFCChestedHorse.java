@@ -134,7 +134,7 @@ public abstract class TFCChestedHorse extends AbstractChestedHorse implements Ho
     public void containerChanged(Container container)
     {
         super.containerChanged(container);
-        overburdened = Helpers.countOverburdened(container) == 1;
+        overburdened = Helpers.countOverburdened(container) > 0;
     }
 
     @Override
