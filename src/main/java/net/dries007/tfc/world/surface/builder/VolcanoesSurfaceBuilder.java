@@ -40,7 +40,7 @@ public class VolcanoesSurfaceBuilder implements SurfaceBuilder
     {
         if (context.biome().isVolcanic())
         {
-            final float easing = volcanoNoise.calculateEasing(context.pos().getX(), context.pos().getZ(), context.biome().getVolcanoRarity());
+            final float easing = volcanoNoise.calculateEasing(context.pos(), context.biome());
             if (easing > 0.6f && startY > context.biome().getVolcanoBasaltHeight() + heightNoise.noise(context.pos().getX(), context.pos().getZ()))
             {
                 buildVolcanicSurface(context, startY, endY, easing);
