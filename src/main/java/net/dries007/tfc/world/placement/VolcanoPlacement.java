@@ -9,6 +9,7 @@ package net.dries007.tfc.world.placement;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
 
+import net.dries007.tfc.world.Seed;
 import net.dries007.tfc.world.biome.VolcanoNoise;
 
 public class VolcanoPlacement extends CenterOrDistanceToPlacement<VolcanoNoise>
@@ -27,7 +28,7 @@ public class VolcanoPlacement extends CenterOrDistanceToPlacement<VolcanoNoise>
     }
 
     @Override
-    protected VolcanoNoise createContext(long seed)
+    protected VolcanoNoise createContext(Seed seed)
     {
         return new VolcanoNoise(seed);
     }

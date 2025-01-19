@@ -10,6 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
 
+import net.dries007.tfc.world.Seed;
 import net.dries007.tfc.world.noise.Cellular2D;
 import net.dries007.tfc.world.noise.Noise2D;
 import net.dries007.tfc.world.noise.OpenSimplex2D;
@@ -48,13 +49,10 @@ public final class VolcanoNoise implements CenterOrDistanceNoise
     private final Cellular2D cellNoise;
     private final Noise2D jitterNoise;
 
-    /**
-     * @param seed The level seed - important, this is used from multiple different locations (base noise, surface builder, placement/decorator), and must have the same seed.
-     */
-    public VolcanoNoise(long seed)
+    public VolcanoNoise(Seed seed)
     {
-        cellNoise = new Cellular2D(seed).spread(0.009f);
-        jitterNoise = new OpenSimplex2D(seed + 1234123L).octaves(2).scaled(-0.0016f, 0.0016f).spread(0.128f);
+        cellNoise = new Cellular2D(seed.seed()).spread(0.009f);
+        jitterNoise = new OpenSimplex2D(seed.seed() + 8179234123L).octaves(2).scaled(-0.0016f, 0.0016f).spread(0.128f);
     }
 
     @Override

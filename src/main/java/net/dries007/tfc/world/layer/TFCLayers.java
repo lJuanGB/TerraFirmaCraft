@@ -11,6 +11,7 @@ import net.minecraft.util.RandomSource;
 import org.apache.commons.lang3.mutable.MutableInt;
 
 import net.dries007.tfc.util.IArtist;
+import net.dries007.tfc.world.Seed;
 import net.dries007.tfc.world.biome.BiomeExtension;
 import net.dries007.tfc.world.biome.TFCBiomes;
 import net.dries007.tfc.world.chunkdata.ForestType;
@@ -155,10 +156,9 @@ public class TFCLayers
         return layer;
     }
 
-    public static AreaFactory createRegionBiomeLayer(RegionGenerator generator, long seed)
+    public static AreaFactory createRegionBiomeLayer(RegionGenerator generator, Seed seed)
     {
-        final Random random = new Random(seed);
-        final TypedAreaFactory<Region.Point> regionLayer = new RegionLayer(generator).apply(random.nextLong());
+        final TypedAreaFactory<Region.Point> regionLayer = new RegionLayer(generator).apply(seed.next());
 
         AreaFactory mainLayer;
 
@@ -166,35 +166,35 @@ public class TFCLayers
 
         // Grid scale
 
-        mainLayer = RegionEdgeBiomeLayer.INSTANCE.apply(random.nextLong(), mainLayer);
-        mainLayer = ZoomLayer.NORMAL.apply(random.nextLong(), mainLayer);
+        mainLayer = RegionEdgeBiomeLayer.INSTANCE.apply(seed.next(), mainLayer);
+        mainLayer = ZoomLayer.NORMAL.apply(seed.next(), mainLayer);
 
-        mainLayer = ShoreLayer.INSTANCE.apply(random.nextLong(), mainLayer);
-        mainLayer = MoreShoresLayer.INSTANCE.apply(random.nextLong(), mainLayer);
-        mainLayer = ZoomLayer.NORMAL.apply(random.nextLong(), mainLayer);
-        mainLayer = ZoomLayer.NORMAL.apply(random.nextLong(), mainLayer);
+        mainLayer = ShoreLayer.INSTANCE.apply(seed.next(), mainLayer);
+        mainLayer = MoreShoresLayer.INSTANCE.apply(seed.next(), mainLayer);
+        mainLayer = ZoomLayer.NORMAL.apply(seed.next(), mainLayer);
+        mainLayer = ZoomLayer.NORMAL.apply(seed.next(), mainLayer);
 
         // Chunk scale
 
-        mainLayer = ZoomLayer.NORMAL.apply(random.nextLong(), mainLayer);
-        mainLayer = ZoomLayer.NORMAL.apply(random.nextLong(), mainLayer);
+        mainLayer = ZoomLayer.NORMAL.apply(seed.next(), mainLayer);
+        mainLayer = ZoomLayer.NORMAL.apply(seed.next(), mainLayer);
 
         // Quart scale
 
-        mainLayer = SmoothLayer.INSTANCE.apply(random.nextLong(), mainLayer);
+        mainLayer = SmoothLayer.INSTANCE.apply(seed.next(), mainLayer);
 
         return mainLayer;
     }
 
-    public static AreaFactory createUniformLayer(RandomSource random, int zoomLevels)
+    public static AreaFactory createUniformLayer(Seed seed, int zoomLevels)
     {
         AreaFactory layer;
 
-        layer = UniformLayer.INSTANCE.apply(random.nextLong());
+        layer = UniformLayer.INSTANCE.apply(seed.next());
         for (int i = 0; i < zoomLevels; i++)
         {
-            layer = ZoomLayer.NORMAL.apply(random.nextLong(), layer);
-            layer = SmoothLayer.INSTANCE.apply(random.nextLong(), layer);
+            layer = ZoomLayer.NORMAL.apply(seed.next(), layer);
+            layer = SmoothLayer.INSTANCE.apply(seed.next(), layer);
         }
 
         return layer;

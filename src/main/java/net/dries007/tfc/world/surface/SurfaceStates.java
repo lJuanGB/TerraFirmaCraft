@@ -23,6 +23,9 @@ public final class SurfaceStates
     public static final SurfaceState COBBLE = context -> context.getRock().cobble().defaultBlockState();
     public static final SurfaceState GRAVEL = context -> context.getRock().gravel().defaultBlockState();
 
+    public static final SurfaceState SAND = SoilSurfaceState.buildSand(false);
+    public static final SurfaceState SAND_WITH_STONE = SoilSurfaceState.buildSand(true);
+
     /**
      * Grass / Dirt / Gravel, or Sand / Sand / Sandstone
      */

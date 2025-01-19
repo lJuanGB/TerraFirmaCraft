@@ -20,13 +20,14 @@ import net.minecraft.world.level.levelgen.placement.PlacementContext;
 import net.minecraft.world.level.levelgen.placement.PlacementModifier;
 
 import net.dries007.tfc.world.Codecs;
+import net.dries007.tfc.world.Seed;
 import net.dries007.tfc.world.biome.BiomeExtension;
 import net.dries007.tfc.world.biome.CenterOrDistanceNoise;
 import net.dries007.tfc.world.biome.TFCBiomes;
 
 /**
  * A placement modifier for an arbitrary {@link CenterOrDistanceNoise} instance. A subclass only
- * needs to override {@link #createContext(long)} to be able to provide either "generate at the center of",
+ * needs to override {@link #createContext(Seed)} to be able to provide either "generate at the center of",
  * or "generate within a distance of", these features.
  */
 public abstract class CenterOrDistanceToPlacement<T extends CenterOrDistanceNoise> extends PlacementModifier
@@ -60,7 +61,7 @@ public abstract class CenterOrDistanceToPlacement<T extends CenterOrDistanceNois
         LocalContext<T> local = localContext.get();
         if (local == null || local.seed != seed)
         {
-            local = new LocalContext<>(seed, createContext(seed));
+            local = new LocalContext<>(seed, createContext(Seed.unsafeOf(seed)));
             localContext.set(local);
         }
 
@@ -86,7 +87,7 @@ public abstract class CenterOrDistanceToPlacement<T extends CenterOrDistanceNois
         return Stream.empty();
     }
 
-    protected abstract T createContext(long seed);
+    protected abstract T createContext(Seed seed);
 
     private record LocalContext<T>(long seed, T context) {}
 }
