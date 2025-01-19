@@ -28,9 +28,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterators;
 import com.machinezoo.noexception.throwing.ThrowingRunnable;
 import com.machinezoo.noexception.throwing.ThrowingSupplier;
-import com.mojang.datafixers.util.Pair;
 import com.mojang.logging.LogUtils;
-import com.mojang.serialization.Codec;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -39,8 +37,6 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -537,13 +533,25 @@ public final class Helpers
                 }
             });
         }
+    }
 
+    /**
+     * The number of huge/heavy items a subject is carrying. One = exhausted, More than one = overburdened.
+     */
+    public enum CarryCount
+    {
+        NONE, ONE, MORE_THAN_ONE;
+
+        public boolean isNonZero()
+        {
+            return this != NONE;
+        }
     }
 
     /**
      * @return 0 (well-burdened), 1 (exhausted), 2 (overburdened, add potion effect)
      */
-    public static int countOverburdened(Container container)
+    public static CarryCount getCarryCount(Container container)
     {
         int count = 0;
         for (int i = 0; i < container.getContainerSize(); i++)
@@ -551,18 +559,23 @@ public final class Helpers
             final ItemStack stack = container.getItem(i);
             if (!stack.isEmpty())
             {
-                IItemSize size = ItemSizeManager.get(stack);
+                final IItemSize size = ItemSizeManager.get(stack);
                 if (size.getWeight(stack) == Weight.VERY_HEAVY && size.getSize(stack) == Size.HUGE)
                 {
                     count++;
                     if (count == 2)
                     {
-                        return count;
+                        break;
                     }
                 }
             }
         }
-        return count;
+        return switch (count)
+        {
+            case 0 -> CarryCount.NONE;
+            case 1 -> CarryCount.ONE;
+            default -> CarryCount.MORE_THAN_ONE;
+        };
     }
 
     public static MobEffectInstance getOverburdened(boolean visible)

@@ -171,7 +171,6 @@ import net.dries007.tfc.common.fluids.FluidHelpers;
 import net.dries007.tfc.common.items.BlowpipeItem;
 import net.dries007.tfc.common.items.TFCShieldItem;
 import net.dries007.tfc.common.player.IPlayerInfo;
-import net.dries007.tfc.common.player.PlayerInfo;
 import net.dries007.tfc.common.recipes.CollapseRecipe;
 import net.dries007.tfc.common.recipes.LandslideRecipe;
 import net.dries007.tfc.config.TFCConfig;
@@ -185,7 +184,6 @@ import net.dries007.tfc.util.Helpers;
 import net.dries007.tfc.util.InteractionManager;
 import net.dries007.tfc.util.PhysicalDamageType;
 import net.dries007.tfc.util.SelfTests;
-import net.dries007.tfc.util.calendar.ICalendar;
 import net.dries007.tfc.util.climate.Climate;
 import net.dries007.tfc.util.climate.ClimateModel;
 import net.dries007.tfc.util.climate.OverworldClimateModel;
@@ -634,6 +632,7 @@ public final class ForgeEventHandler
                 final ItemStack stack = bowl.getInventory().getStackInSlot(0);
                 if (stack.getItem() == Items.GUNPOWDER)
                 {
+                    Helpers.removeStack(bowl.getInventory(), 0); // Clear the inventory to prevent drops; see TerraFirmaCraft#2856
                     level.explode(null, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, stack.getCount() / 6f + 2f, Level.ExplosionInteraction.BLOCK);
                     event.setCanceled(true);
                 }
@@ -762,14 +761,10 @@ public final class ForgeEventHandler
         }
         if (!level.isClientSide() && !player.getAbilities().invulnerable && TFCConfig.SERVER.enableOverburdening.get() && level.getGameTime() % 20 == 0)
         {
-            final int hugeHeavyCount = Helpers.countOverburdened(player.getInventory());
-            if (hugeHeavyCount >= 1)
+            switch (Helpers.getCarryCount(player.getInventory()))
             {
-                player.addEffect(Helpers.getExhausted(false));
-            }
-            if (hugeHeavyCount == 2)
-            {
-                player.addEffect(Helpers.getOverburdened(false));
+                case ONE -> player.addEffect(Helpers.getExhausted(false));
+                case MORE_THAN_ONE -> player.addEffect(Helpers.getOverburdened(false));
             }
         }
     }

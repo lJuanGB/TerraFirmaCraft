@@ -13,6 +13,7 @@ import java.util.function.Supplier;
 import net.dries007.tfc.common.blocks.plant.fruit.FruitBlocks;
 import net.dries007.tfc.common.blocks.wood.Wood;
 import net.dries007.tfc.common.component.size.Size;
+import net.dries007.tfc.common.fluids.FluidHelpers;
 import net.dries007.tfc.config.animals.MammalConfig;
 import net.dries007.tfc.config.animals.OviparousAnimalConfig;
 import net.dries007.tfc.config.animals.ProducingMammalConfig;
@@ -193,8 +194,11 @@ public class ServerConfig extends BaseConfig
     public final Supplier<Double> volcanicGlassBottleBreakChance;
     public final Supplier<Integer> olivineGlassBottleCapacity;
     public final Supplier<Double> olivineGlassBottleBreakChance;
-    // Items - Wooden Bucket
+    // Items - Buckets
     public final Supplier<Integer> woodenBucketCapacity;
+    public final Supplier<Boolean> woodenBucketCanPlaceSources;
+    public final Supplier<Integer> metalBucketCapacity;
+    public final Supplier<Boolean> metalBucketCanPlaceSources;
 
     // Mechanics - Heat
     public final Supplier<Double> deviceHeatingModifier;
@@ -240,8 +244,6 @@ public class ServerConfig extends BaseConfig
     public final Supplier<Double> traitBurntToACrispModifier;
     public final Supplier<Double> traitWildModifier;
     public final Supplier<Double> traitCannedModifier;
-    // Mechanics - Fluids
-    public final Supplier<Boolean> enableBucketsPlacingSources;
     // Mechanics - Vanilla Changes
     public final Supplier<Boolean> enableVanillaBonemeal;
     public final Supplier<Boolean> enableVanillaSkeletonHorseSpawning;
@@ -556,8 +558,21 @@ public class ServerConfig extends BaseConfig
         olivineGlassBottleCapacity = builder.comment("Tank capacity of a olivine glass bottle (in mB).").define("olivineGlassBottleCapacity", 400, 0, FluidAlloy.MAX_ALLOY);
         olivineGlassBottleBreakChance = builder.comment("The chance a olivine glass bottle will break after drinking.").define("olivineGlassBottleBreakChance", 0.01, 0, 1);
 
-        builder.swap("woodenBucket");
-        woodenBucketCapacity = builder.comment("Tank capacity of a wooden bucket (in mB).").define("woodenBucketCapacity", 1000, 0, FluidAlloy.MAX_ALLOY);
+        builder.swap("buckets");
+
+        woodenBucketCapacity = builder
+            .comment("Tank capacity of a wooden bucket (in mB).")
+            .define("woodenBucketCapacity", FluidHelpers.BUCKET_VOLUME, 0, FluidAlloy.MAX_ALLOY);
+        woodenBucketCanPlaceSources = builder
+            .comment("If `true`, a wooden bucket can place source blocks")
+            .define("woodenBucketCanPlaceSources", false);
+
+        metalBucketCapacity = builder
+            .comment("Tank capacity of a metal (red and blue steel) bucket (in mB).")
+            .define("metalBucketCapacity", FluidHelpers.BUCKET_VOLUME, 0, FluidAlloy.MAX_ALLOY);
+        metalBucketCanPlaceSources = builder
+            .comment("If `true`, a metal (red and blue steel) bucket can place source blocks")
+            .define("metalBucketCanPlaceSources", false);
 
         builder.pop().swap("mechanics").push("heat");
 
@@ -634,10 +649,6 @@ public class ServerConfig extends BaseConfig
         traitBurntToACrispModifier = builder.comment("The modifier for the 'Burnt To A Crisp' food trait. Values less than 1 extend food lifetime, values greater than one decrease it. A value of zero stops decay.").define("traitBurntToACrispModifier", 2.5, 0, Double.MAX_VALUE);
         traitWildModifier = builder.comment("The modifier for the 'Wild' food trait. Values less than 1 extend food lifetime, values greater than one decrease it. A value of zero stops decay.").define("traitWildModifier", 0.5, 0, Double.MAX_VALUE);
         traitCannedModifier = builder.comment("The modifier for the 'Canned' food trait. Values less than 1 extend food lifetime, values greater than one decrease it. A value of zero stops decay.").define("traitCannedModifier", 0.00001, 0, Double.MAX_VALUE);
-
-        builder.swap("fluids");
-
-        enableBucketsPlacingSources = builder.comment("If true, TFC buckets that naturally place sources (colored steel) will place sources. If false, this behavior is disabled.").define("enableBucketsPlacingSources", true);
 
         builder.swap("vanillaChanges");
 
