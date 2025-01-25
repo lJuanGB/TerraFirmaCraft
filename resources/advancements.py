@@ -45,12 +45,12 @@ def generate(rm: ResourceManager):
     story.advancement('chisel', icon('tfc:metal/chisel/copper'), 'Sculptor', 'Make a metal chisel', 'copper_age', inventory_changed('#tfc:chisels'))
     story.advancement('propick', icon('tfc:metal/propick/copper'), 'Prospector', 'Make a prospector\'s pickaxe', 'copper_age', inventory_changed('#tfc:propicks'))
     # Parented to chisel
-    story.advancement('smooth_stone', icon('tfc:rock/smooth/chert'), 'Super Smooth', 'Chisel a piece of raw stone into a smooth stone block', 'chisel', generic('tfc:chiseled', {'tag': 'forge:smooth_stone'}))
-    story.advancement('raw_stone', icon('tfc:rock/hardened/basalt'), 'Raw Emotions', 'Isolate a piece of raw rock to make it pop off', 'smooth_stone', inventory_changed('#forge:stone'))
+    story.advancement('smooth_stone', icon('tfc:rock/smooth/chert'), 'Super Smooth', 'Chisel a piece of raw stone into a smooth stone block', 'chisel', generic('tfc:chiseled', {'tag': 'c:stones/smooth'}))
+    story.advancement('raw_stone', icon('tfc:rock/hardened/basalt'), 'Raw Emotions', 'Isolate a piece of raw rock to make it pop off', 'smooth_stone', inventory_changed('#c:stones'))
     story.advancement('quern', icon('tfc:quern'), 'The Grind', 'Craft a quern and a handstone', 'raw_stone', multiple(inventory_changed('tfc:handstone'), inventory_changed('tfc:quern')), requirements=[['quern'], ['handstone']])
     story.advancement('flux', icon('tfc:powder/flux'), 'In Flux', 'Grind some flux using a quern', 'quern', inventory_changed('#tfc:flux'), frame='challenge')
-    story.advancement('welding', icon('tfc:metal/double_ingot/copper'), 'Double Trouble', 'Weld a double ingot in an anvil', 'flux', inventory_changed('#forge:double_ingots'))
-    story.advancement('sheet', icon('tfc:metal/sheet/copper'), 'The Flattening', 'Pound a double ingot into a sheet', 'welding', inventory_changed('#forge:sheets'))
+    story.advancement('welding', icon('tfc:metal/double_ingot/copper'), 'Double Trouble', 'Weld a double ingot in an anvil', 'flux', inventory_changed('#c:double_ingots'))
+    story.advancement('sheet', icon('tfc:metal/sheet/copper'), 'The Flattening', 'Pound a double ingot into a sheet', 'welding', inventory_changed('#c:sheets'))
     story.advancement('shield', icon('tfc:metal/shield/copper'), 'Take Cover!', 'Craft a shield from a double sheet', 'sheet', inventory_changed('#tfc:shields'))
     # Parented to saw
     story.advancement('barrel', icon('tfc:wood/barrel/acacia'), 'Do a Barrel Roll!', 'Craft a barrel using a saw and lumber', 'saw', inventory_changed('#tfc:barrels'))

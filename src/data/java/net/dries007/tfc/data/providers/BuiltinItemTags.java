@@ -111,13 +111,13 @@ public class BuiltinItemTags extends TagsProvider<Item> implements Accessors
 
         for (Metal metal : Metal.values())
         {
-            metalTag(metal, Metal.ItemType.INGOT);
+            metalTag(metal, Metal.ItemType.INGOT, Tags.Items.INGOTS);
             if (metal.defaultParts())
             {
-                metalTag(metal, Metal.ItemType.DOUBLE_INGOT);
-                metalTag(metal, Metal.ItemType.SHEET);
-                metalTag(metal, Metal.ItemType.DOUBLE_SHEET);
-                metalTag(metal, Metal.ItemType.ROD);
+                metalTag(metal, Metal.ItemType.DOUBLE_INGOT, DOUBLE_INGOTS);
+                metalTag(metal, Metal.ItemType.SHEET, SHEETS);
+                metalTag(metal, Metal.ItemType.DOUBLE_SHEET, DOUBLE_SHEETS);
+                metalTag(metal, Metal.ItemType.ROD, Tags.Items.RODS);
                 copy(storageBlockTagOf(Registries.BLOCK, metal), storageBlockTagOf(Registries.ITEM, metal));
             }
         }
@@ -334,7 +334,9 @@ public class BuiltinItemTags extends TagsProvider<Item> implements Accessors
         // and they don't contain other tool tags (???) so it's unclear what the point of them is.
 
         // TFC Added `#c:tools/`
-        tag(TOOLS_HAMMER).add(TFCItems.METAL_ITEMS, Metal.ItemType.HAMMER);
+        tag(TOOLS_HAMMER)
+            .add(TFCItems.METAL_ITEMS, Metal.ItemType.HAMMER)
+            .add(TFCItems.ROCK_TOOLS, RockCategory.ItemType.HAMMER);
         tag(TOOLS_SAW).add(TFCItems.METAL_ITEMS, Metal.ItemType.SAW);
         tag(TOOLS_SCYTHE).add(TFCItems.METAL_ITEMS, Metal.ItemType.SCYTHE);
         tag(TOOLS_KNIFE)
@@ -593,9 +595,11 @@ public class BuiltinItemTags extends TagsProvider<Item> implements Accessors
         });
     }
 
-    private void metalTag(Metal metal, Metal.ItemType type)
+    private void metalTag(Metal metal, Metal.ItemType type, TagKey<Item> baseTag)
     {
-        tag(commonTagOf(metal, type)).add(TFCItems.METAL_ITEMS.get(metal).get(type));
+        final TagKey<Item> commonTag = commonTagOf(metal, type);
+        tag(commonTag).add(TFCItems.METAL_ITEMS.get(metal).get(type));
+        tag(baseTag).addTag(commonTag);
     }
 
     private void copy(TagKey<Block> blockTag)
