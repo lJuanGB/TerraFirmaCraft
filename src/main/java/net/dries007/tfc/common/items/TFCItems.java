@@ -343,6 +343,9 @@ public final class TFCItems
     public static final ItemId UNFIRED_VESSEL = register("ceramic/unfired_vessel");
     public static final ItemId VESSEL = register("ceramic/vessel", () -> new VesselItem(new Properties()));
 
+    public static final ItemId UNFIRED_CHANNEL = register("unfired_channel");
+    public static final ItemId UNFIRED_MOLD_TABLE = register("unfired_mold_table");
+
     public static final Map<DyeColor, ItemId> UNFIRED_GLAZED_VESSELS = Helpers.mapOf(DyeColor.class, color ->
         register("ceramic/" + color + "_unfired_vessel")
     );

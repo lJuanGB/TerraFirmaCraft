@@ -36,10 +36,12 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.ItemAbilities;
 import net.neoforged.neoforge.common.ItemAbility;
 import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.RightClickItem;
 import net.neoforged.neoforge.event.entity.player.UseItemOnBlockEvent;
 import org.jetbrains.annotations.NotNull;
 
 import net.dries007.tfc.common.TFCTags;
+import net.dries007.tfc.common.blockentities.MoldBlockEntity;
 import net.dries007.tfc.common.blockentities.TFCBlockEntities;
 import net.dries007.tfc.common.blocks.CharcoalPileBlock;
 import net.dries007.tfc.common.blocks.DirectionPropertyBlock;
@@ -412,6 +414,23 @@ public final class InteractionManager
                         SheetPileBlock.addSheet(level, relativePos, placingState, sheetFace, insertStack);
                         return InteractionResult.sidedSuccess(level.isClientSide);
                     }
+                }
+            }
+            return InteractionResult.PASS;
+        });
+
+        registerBlock(Ingredient.of(TFCTags.Items.USABLE_IN_MOLD_TABLE), (stack, context) -> {
+
+            final Player player = context.getPlayer();
+            if (player != null && player.mayBuild() && !player.isShiftKeyDown()) 
+            {
+                final Level level = context.getLevel();
+                final BlockPos posClicked = context.getClickedPos();
+                final Optional<MoldBlockEntity> moldTable = level.getBlockEntity(posClicked, TFCBlockEntities.MOLD_TABLE.get());
+                if (moldTable.isPresent())
+                {
+                    moldTable.get().onRightClick(player);
+                    return InteractionResult.sidedSuccess(context.getLevel().isClientSide);
                 }
             }
             return InteractionResult.PASS;

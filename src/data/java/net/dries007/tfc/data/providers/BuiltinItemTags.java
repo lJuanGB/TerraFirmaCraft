@@ -464,6 +464,7 @@ public class BuiltinItemTags extends TagsProvider<Item> implements Accessors
             .addTags(Tags.Items.TOOLS, SEWING_NEEDLES)
             .add(TFCItems.SANDPAPER, Items.SPYGLASS);
         tag(POWDER_KEG_FUEL).add(Items.GUNPOWDER);
+        tag(USABLE_IN_MOLD_TABLE).addTag(FIRED_MOLDS);
         tag(MINECART_HOLDABLE)
             // Don't use tags, as this is technically restricted to only having blocks, so we don't want it to include other values accidentally
             .add(TFCBlocks.WOODS, Wood.BlockType.BARREL)

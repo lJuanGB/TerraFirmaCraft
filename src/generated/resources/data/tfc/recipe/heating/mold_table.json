@@ -1,0 +1,11 @@
+{
+  "type": "tfc:heating",
+  "ingredient": {
+    "item": "tfc:unfired_mold_table"
+  },
+  "result_item": {
+    "count": 1,
+    "id": "tfc:mold_table"
+  },
+  "temperature": 1399.0
+}

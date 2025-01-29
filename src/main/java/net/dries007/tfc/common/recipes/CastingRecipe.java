@@ -104,6 +104,11 @@ public class CastingRecipe implements INoopInputRecipe, IRecipePredicate<IMold>
         return fluidIngredient;
     }
 
+    public ItemStack getResultItem()
+    {
+        return result.getEmptyStack();
+    }
+
     @Override
     public ItemStack getResultItem(HolderLookup.Provider registries)
     {

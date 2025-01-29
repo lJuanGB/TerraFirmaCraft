@@ -510,6 +510,7 @@ public class TFCTags
         public static final TagKey<Item> BLAST_FURNACE_TUYERES = tag("blast_furnace_tuyeres");
         public static final TagKey<Item> TOOL_RACK_TOOLS = tag("usable_on_tool_rack");
         public static final TagKey<Item> POWDER_KEG_FUEL = tag("usable_in_powder_keg");
+        public static final TagKey<Item> USABLE_IN_MOLD_TABLE = tag("usable_in_mold_table");
         /**
          * Items that can be placed in a {@link HoldingMinecart}. Items present here must be block items, in order to
          * be able to render them.

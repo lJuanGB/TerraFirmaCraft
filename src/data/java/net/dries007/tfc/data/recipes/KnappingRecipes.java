@@ -69,6 +69,9 @@ public interface KnappingRecipes extends Recipes
         fireClayKnapping(TFCItems.UNFIRED_CRUCIBLE, 1, "X   X", "X   X", "X   X", "X   X", "XXXXX");
         fireClayKnapping(TFCItems.UNFIRED_FIRE_BRICK, 3, "XXXXX", "     ", "XXXXX", "     ", "XXXXX");
         fireClayKnapping(TFCItems.UNFIRED_FIRE_INGOT_MOLD, 2,"XXXX", "X  X", "X  X", "X  X", "XXXX");
+        fireClayKnapping(TFCItems.UNFIRED_CHANNEL, 2, "X   X", " XXX ");
+        fireClayKnapping("4", TFCItems.UNFIRED_CHANNEL, 4, "X   X", " XXX ", "     ", "X   X", " XXX ");
+        fireClayKnapping(TFCItems.UNFIRED_MOLD_TABLE, 1, "XXXXX", "X   X", "X   X", "X   X", "XXXXX");
 
         leatherKnapping(Items.LEATHER_HELMET, "XXXXX", "X   X", "X   X", "     ", "     ");
         leatherKnapping(Items.LEATHER_CHESTPLATE, "X   X", "XXXXX", "XXXXX", "XXXXX", "XXXXX");
@@ -127,9 +130,19 @@ public interface KnappingRecipes extends Recipes
 
     private void fireClayKnapping(ItemLike output, int count, String... pattern)
     {
-        knapping(BuiltinKnappingTypes.FIRE_CLAY, pattern, output, count);
+        fireClayKnapping("", output, count, pattern);
+    }
+
+    private void fireClayKnapping(String suffix, ItemLike output, int count, String... pattern)
+    {
+        add(nameOf(output) + (suffix.isEmpty() ? "" : "_" + suffix), new KnappingRecipe(
+            KnappingType.MANAGER.getCheckedReference(BuiltinKnappingTypes.FIRE_CLAY),
+            KnappingPattern.from(true, pattern),
+            Optional.empty(),
+            new ItemStack(output, count)
+        ));
         // Un-crafting, only for non-suffixed recipes
-        new CraftingRecipes.Builder((name, r) -> add(nameOf(output) + "_to_fire_clay", r))
+        if (suffix.isEmpty()) new CraftingRecipes.Builder((name, r) -> add(nameOf(output) + "_to_fire_clay", r))
             .input(output)
             .shapeless(TFCItems.FIRE_CLAY, 5 / count);
     }

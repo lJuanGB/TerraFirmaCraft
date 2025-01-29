@@ -19,6 +19,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LeverBlock;
+import net.minecraft.world.level.block.PipeBlock;
 import net.minecraft.world.level.block.RedStoneWireBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.AttachFace;
@@ -35,7 +36,9 @@ import net.dries007.tfc.common.blocks.DirectionPropertyBlock;
 import net.dries007.tfc.common.blocks.TFCBlocks;
 import net.dries007.tfc.common.blocks.devices.BlastFurnaceBlock;
 import net.dries007.tfc.common.blocks.devices.BloomeryBlock;
+import net.dries007.tfc.common.blocks.devices.ChannelBlock;
 import net.dries007.tfc.common.blocks.devices.CharcoalForgeBlock;
+import net.dries007.tfc.common.blocks.devices.MoldBlock;
 import net.dries007.tfc.common.blocks.devices.SheetPileBlock;
 import net.dries007.tfc.common.blocks.rock.Rock;
 import net.dries007.tfc.common.blocks.rock.RockCategory;
@@ -91,6 +94,7 @@ public final class PatchouliIntegration
         registerMultiblock("full_blast_furnace", api -> blastFurnace(api, true));
         registerMultiblock("rock_anvil", PatchouliIntegration::rockAnvil);
         registerMultiblock("charcoal_forge", PatchouliIntegration::charcoalForge);
+        registerMultiblock("channel_casting", PatchouliIntegration::channelCasting);
         registerMultiblock("windmill", PatchouliIntegration::windmill);
         registerMultiblock("water_wheel", PatchouliIntegration::waterWheel);
         registerMultiblock("clutch_off", api -> clutch(api, false));
@@ -218,6 +222,53 @@ public final class PatchouliIntegration
                     new ItemStack(TFCItems.POWDERS.get(Powder.FLUX).get())
                 )
             );
+
+        return multiblock;
+    }
+
+    private static IMultiblock channelCasting(PatchouliAPI.IPatchouliAPI api)
+    {
+        // ^ W
+        // |
+        // +-> S
+
+        final IMultiblock multiblock = api.makeMultiblock(
+            new String[][] {
+                {"     ", "   R ", "   | ", " S-+c", "     "},
+                {"  XXX", "  XFX", "  0XX", "CNXXX", "  XXX"},
+                {"     ", "     ", "XXX  ", "XXX  ", "XXX  "},
+            },
+            'R',
+            api.stateMatcher(TFCBlocks.CRUCIBLE.get().defaultBlockState()
+                    .setValue(PipeBlock.EAST, true)),
+            'F', api.looseBlockMatcher(TFCBlocks.CHARCOAL_FORGE.get()), ' ', api.airMatcher(),
+            'X',
+            api.looseBlockMatcher(
+                    TFCBlocks.ROCK_BLOCKS.get(Rock.GRANITE).get(Rock.BlockType.BRICKS).get()),
+            '0',
+            api.looseBlockMatcher(
+                    TFCBlocks.ROCK_BLOCKS.get(Rock.GRANITE).get(Rock.BlockType.BRICKS).get()),
+            '|',
+            api.stateMatcher(TFCBlocks.CHANNEL.get().defaultBlockState()
+                    .setValue(ChannelBlock.WEST, true).setValue(ChannelBlock.EAST, true)),
+            '-',
+            api.stateMatcher(TFCBlocks.CHANNEL.get().defaultBlockState()
+                    .setValue(ChannelBlock.SOUTH, true).setValue(ChannelBlock.NORTH, true)),
+            '+',
+            api.stateMatcher(TFCBlocks.CHANNEL.get().defaultBlockState()
+                    .setValue(ChannelBlock.SOUTH, true).setValue(ChannelBlock.NORTH, true)
+                    .setValue(ChannelBlock.WEST, true)),
+            'S',
+            api.stateMatcher(TFCBlocks.CHANNEL.get().defaultBlockState()
+                    .setValue(ChannelBlock.SOUTH, true)),
+            'N',
+            api.stateMatcher(TFCBlocks.CHANNEL.get().defaultBlockState()
+                    .setValue(ChannelBlock.NORTH, true)),
+            'C',
+            api.stateMatcher(TFCBlocks.MOLD_TABLE.get().defaultBlockState()
+                    .setValue(MoldBlock.SOUTH, true)),
+            'c', api.stateMatcher(TFCBlocks.MOLD_TABLE.get().defaultBlockState()
+                    .setValue(MoldBlock.NORTH, true)));
 
         return multiblock;
     }

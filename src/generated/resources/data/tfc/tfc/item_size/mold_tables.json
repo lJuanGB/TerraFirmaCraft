@@ -1,0 +1,12 @@
+{
+  "ingredient": [
+    {
+      "item": "tfc:unfired_mold_table"
+    },
+    {
+      "item": "tfc:mold_table"
+    }
+  ],
+  "size": "huge",
+  "weight": "heavy"
+}

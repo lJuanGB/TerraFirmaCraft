@@ -1044,6 +1044,14 @@ def make_book(rm: ResourceManager, i18n: I18n, local_instance: bool = False, rev
             text('A $(thing)Bellows$() is a device which can be used to increase the air flow through another device which lets them burn at a hotter temperature. However, by burning at a hotter temperature they will also consume fuel faster. The bellows can provide air to a device that is directly in front of it, or in front and one block down. This allows it to provide air to a $(l:getting_started/firepit)Firepit$(), or a $(l:mechanics/charcoal_forge)Charcoal Forge$() for example.'),
             crafting('tfc:crafting/bellows', title='', text_contents='To use the bellows, simply place it facing the targeted heating device, and use it. The bellows will pump air into the device, raising the maximum temperature for a short time.')
         )),
+        entry('channels', 'Casting with Channels', 'tfc:channel', pages=(
+            text('You can cast from a $(thing)Crucible$() to more than one mold at a time using $(thing)Channels$() and $(thing)Mold Tables$(). Simply connect the $(thing)Mold Tables$() to the $(thing)Crucible$() using $(thing)Channels$() and right-click on the $(thing)Channel$() next to the $(thing)Crucible$(). Shift-right-click the $(thing)Mold Table$() with a $(l:getting_started/pottery#mold)Mold$() to place it or remove it.'),
+            knapping('tfc:knapping/ceramic/unfired_channel_4', 'Knapping several $(thing)Unfired Channels$().'),
+            knapping('tfc:knapping/ceramic/unfired_mold_table', 'Knapping an $(thing)Unfired Mold Table$().'),
+            heat_recipe('tfc:heating/channel', 'After the channels and mold table are knapped, they will need to be $(thing)fired$(), like any piece of pottery.'),
+            multiblock('A casting set up', '', False, multiblock_id='tfc:channel_casting'),
+            text('$(li)Using a bellow on a $(thing)Mold Table$() will cool the metal faster.$()$(li)Activating a $(thing)Channel$() with a redstone pulse will start pouring the metal.$()$(li)$(thing)Mold Tables$() output a comparator signal.', 'Automation')
+        )),
         entry('grill', 'Firepit And Grill', 'tfc:grill', pages=(
             text('A $(thing)Grill$() is an item that can be added to a firepit to cook foods more efficiently. The grill is able to cook five items at once, and also gives these items the $(thing)Wood Grilled$() trait when cooking food, which provides a minor buff to the item\'s $(l:mechanics/decay)expiration date$(). In order to create a firepit with grill, first create a $(l:getting_started/firepit)Firepit$(), then use a $(thing)Wrought Iron Grill$() on the firepit.').link('tfc:wrought_iron_grill'),
             block_spotlight('A Firepit with Grill', '', 'tfc:grill'),

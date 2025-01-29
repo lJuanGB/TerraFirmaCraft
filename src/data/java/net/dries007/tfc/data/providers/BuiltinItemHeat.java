@@ -146,6 +146,8 @@ public class BuiltinItemHeat extends DataManagerProvider<HeatDefinition> impleme
         add(TFCTags.Items.UNFIRED_VESSELS, 1.0f);
         add(TFCTags.Items.UNFIRED_LARGE_VESSELS, 1.5f);
         add(TFCTags.Items.UNFIRED_MOLDS, 1.5f);
+        add(TFCItems.UNFIRED_CHANNEL, 1.5f);
+        add(TFCItems.UNFIRED_MOLD_TABLE, 1.5f);
         add(Items.CLAY, 0.5f);
         add(TFCItems.KAOLIN_CLAY, 2.0f);
         add(ingredientOf(

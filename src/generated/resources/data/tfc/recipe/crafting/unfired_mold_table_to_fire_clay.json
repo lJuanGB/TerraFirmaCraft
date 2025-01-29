@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "tfc:unfired_mold_table"
+    }
+  ],
+  "result": {
+    "count": 5,
+    "id": "tfc:fire_clay"
+  }
+}

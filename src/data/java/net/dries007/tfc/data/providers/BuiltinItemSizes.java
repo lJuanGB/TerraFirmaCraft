@@ -86,6 +86,10 @@ public class BuiltinItemSizes extends DataManagerProvider<ItemSizeDefinition> im
         add("soups", TFCTags.Items.SOUPS, Size.VERY_SMALL, Weight.MEDIUM);
         add("salads", TFCTags.Items.SALADS, Size.VERY_SMALL, Weight.MEDIUM);
         add("bloomery", TFCBlocks.BLOOMERY, Size.LARGE, Weight.VERY_HEAVY);
+        add("mold_tables", ingredientOf(
+            Ingredient.of(TFCItems.UNFIRED_MOLD_TABLE), 
+            Ingredient.of(TFCBlocks.MOLD_TABLE)
+        ), Size.HUGE, Weight.HEAVY);
         add("small_tools", ingredientOf(
             Ingredient.of(TFCTags.Items.TOOLS_CHISEL),
             Ingredient.of(TFCTags.Items.TOOLS_KNIFE),

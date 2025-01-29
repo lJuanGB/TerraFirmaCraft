@@ -56,6 +56,8 @@ public interface HeatRecipes extends Recipes
         add(TFCItems.UNFIRED_FIRE_INGOT_MOLD, TFCItems.FIRE_INGOT_MOLD, POTTERY);
         add(TFCItems.UNFIRED_VESSEL, TFCItems.VESSEL, POTTERY);
         add(TFCItems.UNFIRED_LARGE_VESSEL, TFCBlocks.LARGE_VESSEL, POTTERY);
+        add(TFCItems.UNFIRED_MOLD_TABLE, TFCBlocks.MOLD_TABLE, POTTERY);
+        add(TFCItems.UNFIRED_CHANNEL, TFCBlocks.CHANNEL, POTTERY);
 
         TFCItems.MOLDS.forEach((type, item) -> add(TFCItems.UNFIRED_MOLDS.get(type), item, POTTERY));
         TFCItems.GLAZED_VESSELS.forEach((color, item) -> add(TFCItems.UNFIRED_GLAZED_VESSELS.get(color), item, POTTERY));

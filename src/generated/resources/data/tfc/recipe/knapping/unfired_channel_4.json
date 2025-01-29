@@ -1,0 +1,15 @@
+{
+  "type": "tfc:knapping",
+  "knapping_type": "tfc:fire_clay",
+  "pattern": [
+    "#   #",
+    " ### ",
+    "     ",
+    "#   #",
+    " ### "
+  ],
+  "result": {
+    "count": 4,
+    "id": "tfc:unfired_channel"
+  }
+}

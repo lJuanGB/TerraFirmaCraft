@@ -500,10 +500,42 @@ def generate(rm: ResourceManager):
         rm.block_model('charcoal_forge/heat_%d' % stage, parent='tfc:block/charcoal_forge/template_forge', textures={'top': 'tfc:block/devices/charcoal_forge/%d' % stage})
 
     # Uses a custom block model
-    rm.blockstate('crucible').with_item_model().with_lang(lang('crucible')).with_block_loot({
+    rots = {'north': 270, 'east': 0, 'south': 90, 'west': 180}
+    rm.blockstate_multipart(
+        'tfc:crucible', 
+        {'model': 'tfc:block/crucible'},
+        *[
+            (({rot_name: True}, {'model': 'tfc:block/crucible_connection', 'y': rot_val}))
+            for rot_name, rot_val in rots.items()
+        ]
+    ).with_item_model().with_lang(lang('crucible')).with_block_loot({
         'name': 'tfc:crucible',
         'functions': [copy_block_entity('tfc:crucible')]
     })
+
+    rm.blockstate_multipart(
+        'channel', 
+        ({'model': 'tfc:block/channel_base'}), 
+        (({'down': False}, {'model': 'tfc:block/channel_bottom'})),
+        *[
+            ({rot_name: True}, {'model': 'tfc:block/channel_connection', 'y': rot_val})
+            for rot_name, rot_val in rots.items() 
+        ],
+        *[
+            ({rot_name: False}, {'model': 'tfc:block/channel_stop', 'y': rot_val})
+            for rot_name, rot_val in rots.items() 
+        ]
+    ).with_lang(lang('casting channel')).with_block_loot('tfc:channel')
+
+    # Mold
+    rm.blockstate_multipart(
+        'mold_table', 
+        ({'model': 'tfc:block/mold_table_base'}),
+        *[
+            ({rot_name: False}, {'model': 'tfc:block/mold_table_stop', 'y': rot_val})
+            for rot_name, rot_val in rots.items()
+        ]
+    ).with_lang(lang('mold table')).with_block_loot('tfc:mold_table')
 
     block = rm.block('thatch_bed')
     block.with_lang(lang('thatch bed'))
@@ -1034,6 +1066,14 @@ def generate(rm: ResourceManager):
 
     for pottery in SIMPLE_UNFIRED_POTTERY:  # just the unfired item (fired is a vanilla item)
         rm.item_model(('ceramic', 'unfired_' + pottery)).with_lang(lang('Unfired %s', pottery))
+
+    rm.item('unfired_channel').with_lang(lang('unfired casting channel')).with_item_model(
+        {'0': 'tfc:block/fire_clay_block'}, parent='tfc:item/channel'
+    )
+    rm.item('unfired_mold_table').with_lang(lang('unfired mold table')).with_item_model(
+        {'0': 'tfc:block/fire_clay_block', '1': 'tfc:block/fire_clay_block'},
+        parent='tfc:item/mold_table',
+    )
 
     contained_fluid(rm, ('ceramic', 'jug'), 'tfc:item/ceramic/jug_empty', 'tfc:item/ceramic/jug_overlay').with_lang(lang('Ceramic Jug'))
     contained_fluid(rm, 'wooden_bucket', 'tfc:item/bucket/wooden_bucket_empty', 'tfc:item/bucket/wooden_bucket_overlay').with_lang(lang('Wooden Bucket'))
@@ -2226,6 +2266,9 @@ def generate(rm: ResourceManager):
         permutations=dict((mat + '_tfc', 'tfc:color_palettes/trims/%s' % mat) for mat in TRIM_MATERIALS)
     ))
 
+    # Mold patterns
+    for mold_item_location, pattern in MOLD_PATTERNS.items():
+        mold_model(rm, mold_item_location, pattern)
 
 def flower_pot_cross(rm: ResourceManager, simple_name: str, name: str, model: str, texture: str, loot: str):
     rm.blockstate(name, model='tfc:block/%s' % model).with_lang(lang('potted %s', simple_name)).with_block_loot(loot, 'minecraft:flower_pot')
@@ -2348,6 +2391,19 @@ def slab_loot(rm: ResourceManager, loot: str) -> BlockContext:
         }]
     })
 
+def mold_model(rm: ResourceManager, mold_item_location: str, pattern: str):
+    namespace, path = mold_item_location.split(':')
+    return rm.write(
+        ('assets', namespace, 'models', 'mold', *path.split('/')), 
+        {
+            'loader': 'tfc:mold',
+            'textures': {
+                '0': 'tfc:block/mold',
+                'particle': 'tfc:block/mold'
+            },
+            'pattern': pattern
+        }
+    )
 
 def door_blockstate(base: str) -> JsonObject:
     left = base + '_bottom_left'

@@ -49,12 +49,14 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.util.FastColor.ARGB32;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.AABB;
@@ -63,6 +65,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.client.model.data.ModelData;
 import net.neoforged.neoforge.fluids.FluidStack;
+
+import org.apache.commons.lang3.tuple.Pair;
 import org.joml.Matrix4f;
 
 import net.dries007.tfc.common.component.heat.HeatCapability;
@@ -141,6 +145,11 @@ public final class RenderHelpers
         renderTexturedCuboid(poseStack, buffer, sprite, packedLight, packedOverlay, (float) bounds.minX, (float) bounds.minY, (float) bounds.minZ, (float) bounds.maxX, (float) bounds.maxY, (float) bounds.maxZ);
     }
 
+    public static void renderTexturedCuboid(PoseStack poseStack, VertexConsumer buffer, TextureAtlasSprite sprite, int packedLight, int packedOverlay, AABB bounds, int color)
+    {
+        renderTexturedCuboid(poseStack, buffer, sprite, packedLight, packedOverlay, (float) bounds.minX, (float) bounds.minY, (float) bounds.minZ, (float) bounds.maxX, (float) bounds.maxY, (float) bounds.maxZ, color);
+    }
+
     /**
      * Renders a fully textured, solid cuboid described by the shape (minX, minY, minZ) x (maxX, maxY, maxZ).
      * Texture widths (in pixels) are inferred to be 16 x the width of the quad, which matches normal block pixel texture sizes.
@@ -155,6 +164,11 @@ public final class RenderHelpers
         renderTexturedCuboid(poseStack, buffer, sprite, packedLight, packedOverlay, minX, minY, minZ, maxX, maxY, maxZ, 16f * (maxX - minX), 16f * (maxY - minY), 16f * (maxZ - minZ), doShade);
     }
 
+    public static void renderTexturedCuboid(PoseStack poseStack, VertexConsumer buffer, TextureAtlasSprite sprite, int packedLight, int packedOverlay, float minX, float minY, float minZ, float maxX, float maxY, float maxZ, int color)
+    {
+        renderTexturedCuboid(poseStack, buffer, sprite, packedLight, packedOverlay, minX, minY, minZ, maxX, maxY, maxZ, 16f * (maxX - minX), 16f * (maxY - minY), 16f * (maxZ - minZ), color);
+    }
+
     /**
      * Renders a fully textured, solid cuboid described by the shape (minX, minY, minZ) x (maxX, maxY, maxZ).
      * (xPixels, yPixels, zPixels) represent pixel widths for each side, which are used for texture (u, v) purposes.
@@ -164,6 +178,13 @@ public final class RenderHelpers
         renderTexturedQuads(poseStack, buffer, sprite, packedLight, packedOverlay, getXVertices(minX, minY, minZ, maxX, maxY, maxZ), zPixels, yPixels, 1, 0, 0, doShade);
         renderTexturedQuads(poseStack, buffer, sprite, packedLight, packedOverlay, getYVertices(minX, minY, minZ, maxX, maxY, maxZ), zPixels, xPixels, 0, 1, 0, doShade);
         renderTexturedQuads(poseStack, buffer, sprite, packedLight, packedOverlay, getZVertices(minX, minY, minZ, maxX, maxY, maxZ), xPixels, yPixels, 0, 0, 1, doShade);
+    }
+
+    public static void renderTexturedCuboid(PoseStack poseStack, VertexConsumer buffer, TextureAtlasSprite sprite, int packedLight, int packedOverlay, float minX, float minY, float minZ, float maxX, float maxY, float maxZ, float xPixels, float yPixels, float zPixels, int color)
+    {
+        renderTexturedQuads(poseStack, buffer, sprite, packedLight, packedOverlay, getXVertices(minX, minY, minZ, maxX, maxY, maxZ), zPixels, yPixels, 1, 0, 0, color);
+        renderTexturedQuads(poseStack, buffer, sprite, packedLight, packedOverlay, getYVertices(minX, minY, minZ, maxX, maxY, maxZ), zPixels, xPixels, 0, 1, 0, color);
+        renderTexturedQuads(poseStack, buffer, sprite, packedLight, packedOverlay, getZVertices(minX, minY, minZ, maxX, maxY, maxZ), xPixels, yPixels, 0, 0, 1, color);
     }
 
     /**
@@ -204,6 +225,14 @@ public final class RenderHelpers
         }
     }
 
+    public static void renderTexturedQuads(PoseStack poseStack, VertexConsumer buffer, TextureAtlasSprite sprite, int packedLight, int packedOverlay, float[][] vertices, float uSize, float vSize, float normalX, float normalY, float normalZ, int color)
+    {
+        for (float[] v : vertices)
+        {
+            renderTexturedVertex(poseStack, buffer, packedLight, packedOverlay, v[0], v[1], v[2], sprite.getU(v[3] * uSize * 1f / 16f), sprite.getV(v[4] * vSize * 1f / 16f), v[5] * normalX, v[5] * normalY, v[5] * normalZ, color);
+        }
+    }
+
     public static void renderTexturedVertex(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, float x, float y, float z, float u, float v, float normalX, float normalY, float normalZ)
     {
         renderTexturedVertex(poseStack, buffer, packedLight, packedOverlay, x, y, z, u, v, normalX, normalY, normalZ, true);
@@ -220,8 +249,14 @@ public final class RenderHelpers
     public static void renderTexturedVertex(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, float x, float y, float z, float u, float v, float normalX, float normalY, float normalZ, boolean doShade)
     {
         final float shade = doShade ? getShade(normalX, normalY, normalZ) : 1f;
+        final int color = ARGB32.colorFromFloat(1f, shade, shade, shade);
+        renderTexturedVertex(poseStack, buffer, packedLight, packedOverlay, x, y, z, u, v, normalX, normalY, normalZ, color);
+    }
+
+    public static void renderTexturedVertex(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, float x, float y, float z, float u, float v, float normalX, float normalY, float normalZ, int color)
+    {
         buffer.addVertex(poseStack.last().pose(), x, y, z)
-            .setColor(shade, shade, shade, 1f)
+            .setColor(color)
             .setUv(u, v)
             .setLight(packedLight)
             .setOverlay(packedOverlay)
@@ -730,5 +765,62 @@ public final class RenderHelpers
             return 10f * Mth.cos(degrees);
         }
         return 0f;
+    }
+
+    public static void renderChannelFlow(PoseStack poseStack, VertexConsumer buffer, TextureAtlasSprite sprite, int color, int packedLight, int packedOverlay, Pair<Direction, Byte> source, boolean renderFlowSource)
+    {
+        poseStack.pushPose();
+        poseStack.translate(0.5, 0, 0.5); // Center so that rotation gets applied correctly
+
+        Direction dir = source.getLeft();
+
+        VoxelShape renderBox;
+        switch (dir)
+        {
+            case UP:  
+                renderBox = Block.box(6.0f,  4.0f, 6.0f,  10.0f, 16.0f, 10.0f);
+                break;
+            case SOUTH: poseStack.mulPose(Axis.YP.rotationDegrees(90f)); // Combined rotation: 270
+            case WEST:  poseStack.mulPose(Axis.YP.rotationDegrees(90f)); // Combined rotation: 180
+            case NORTH: poseStack.mulPose(Axis.YP.rotationDegrees(90f)); // Combined rotation: 90
+            case EAST:  
+                renderBox = Block.box(
+                    10.0f, 1.0f, 6.0f, 
+                    renderFlowSource ? 22.0f : 17.0f, 4.0f, 10.0f); // Render a longer box that expands to the source channel if renderFlowSource
+                break;
+            default:
+                throw new IllegalArgumentException("Cannot render source from direction DOWN");
+        }
+
+        poseStack.translate(-0.5, 0, -0.5); // Undo translation
+        RenderHelpers.renderTexturedCuboid(poseStack, buffer, sprite, packedLight, packedOverlay, renderBox.bounds(), color);
+        poseStack.popPose();
+
+        // Render flow drops of > 1 distance
+        poseStack.pushPose();
+        for (int offset = 1; offset < source.getRight(); offset++)
+        {
+            poseStack.translate(0, 1, 0);
+            switch (dir)
+            {
+                case UP:
+                    RenderHelpers.renderTexturedCuboid(
+                        poseStack, buffer, sprite, packedLight, packedOverlay, 
+                        Block.box(6.0f,  0.0f, 6.0f,  10.0f, 16.0f, 10.0f).bounds(),
+                        color
+                    );
+                    break;
+                default:
+                    throw new IllegalArgumentException("Cannot render source from direction other than UP with source > 1 distance");
+            }
+            
+        }
+        poseStack.popPose();
+    }
+
+    public static void renderChannelFlowCenter(PoseStack poseStack, VertexConsumer buffer, TextureAtlasSprite sprite, int color, int packedLight, int packedOverlay)
+    {
+        VoxelShape renderBox = Block.box(6.0f,  1.0f, 6.0f,  10.0f, 4.0f, 10.0f);
+        RenderHelpers.renderTexturedCuboid(poseStack, buffer, sprite, packedLight, packedOverlay, renderBox.bounds(), color);
     }
 }
